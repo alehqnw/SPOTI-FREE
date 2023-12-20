@@ -2,6 +2,7 @@ package com.example.proyectospotify.ui.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -45,15 +48,16 @@ class InicioViewModel: ViewModel() {
             .padding(10.dp)
             ,colors = CardDefaults.cardColors(Color.Red)
         ) {
-            Row {
+            Box{
                 Image(
                     painter = painterResource(id = Imagen),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(horizontal = 0.dp, vertical = 0.dp)
-                        .size(100.dp)
+                        .padding(horizontal = 0.dp, vertical = 10.dp)
+                        .size(150.dp)
                 )
-                //Text(text = Titulo, color = Color.White)
+                //Falta la banda negra del texto
+                    Text(text = Titulo, color = Color.White, modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp).background(Color.Black).align(Alignment.BottomCenter))
 
             }
         }

@@ -1,5 +1,6 @@
 package com.example.proyectospotify.ui.pantalla
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -22,7 +24,8 @@ fun InicioView(navController: NavController){
         val canciones:ArrayList<Canciones> = ViewModel.canciones.value
         LazyRow(modifier = Modifier
             .weight(2f)
-            .fillMaxWidth()){
+            .fillMaxWidth()
+            .background(Color.Black)){
             item{
                 //Text(text = canciones[0].Titulo)
                 //Meter canciones. de momento habrá un texto
