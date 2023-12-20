@@ -1,6 +1,7 @@
 package com.example.proyectospotify.ui.navegacion
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
@@ -17,6 +18,9 @@ fun GrafoNavegacion() {
         }
       }
 
-
-
+}
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun preview(){
+    GrafoNavegacion()
 }

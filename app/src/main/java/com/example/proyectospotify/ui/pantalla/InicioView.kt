@@ -19,14 +19,19 @@ fun InicioView(navController: NavController){
     Column(modifier = Modifier.fillMaxSize()) {
         val ViewModel:InicioViewModel = viewModel()
         ViewModel.CargaCanciones()
-        val canciones:ArrayList<Canciones> = ViewModel.RecogeCanciones().toMutableList() as ArrayList<Canciones>
+        val canciones:ArrayList<Canciones> = ViewModel.canciones.value
         LazyRow(modifier = Modifier
-            .weight(5f)
+            .weight(2f)
             .fillMaxWidth()){
-            items(5){
+            item{
+                //Text(text = canciones[0].Titulo)
                 //Meter canciones. de momento habrá un texto
-                Text(text = "Adiós Mundo")
+                for (canciones1 in canciones) {
+                    ViewModel.CancionesCard(Titulo = canciones1.Titulo, Imagen = canciones1.Imagen)
+                }
+
             }
         }
     }
 }
+
