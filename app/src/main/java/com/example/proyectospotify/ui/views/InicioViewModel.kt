@@ -32,6 +32,7 @@ class InicioViewModel: ViewModel() {
     private var _nombre = MutableStateFlow("Alejandro")
     val nombre = _nombre.asStateFlow()
     private val _canciones= MutableStateFlow(arrayListOf<Canciones>())
+
     val canciones = _canciones.asStateFlow()
     fun actualizarNombre(nuevoNombre: String){
         _nombre.value = nuevoNombre
