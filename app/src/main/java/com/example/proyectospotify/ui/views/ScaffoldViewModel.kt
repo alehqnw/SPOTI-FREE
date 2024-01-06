@@ -1,6 +1,7 @@
 package com.example.proyectospotify.ui.views
 
 import androidx.lifecycle.ViewModel
+import com.example.proyectospotify.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -17,13 +18,13 @@ class ScaffoldViewModel : ViewModel() {
     }
 
 
-    private val _cancionActual = MutableStateFlow(R.drawable.ibai)
+    private val _cancionActual = MutableStateFlow(R.drawable.ggst)
     val cancionActual = _cancionActual.asStateFlow()
 
 
     // Función que actualiza la canción actual
     fun modificarCancion(){
-        if(_cancionActual.value == R.drawable.ibai) _cancionActual.value = R.drawable.bunny
-        else _cancionActual.value = R.drawable.ibai
+        if(_cancionActual.value == R.drawable.ggst) _cancionActual.value = R.drawable.ggst
+        else _cancionActual.value = R.drawable.ggst
     }
 }

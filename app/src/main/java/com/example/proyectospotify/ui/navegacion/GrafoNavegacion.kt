@@ -17,7 +17,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.proyectospotify.ui.modelo.Rutas
 import com.example.proyectospotify.ui.pantalla.BarraInferior
 import com.example.proyectospotify.ui.pantalla.BarraSuperior
+import com.example.proyectospotify.ui.pantalla.Buscador
 import com.example.proyectospotify.ui.pantalla.InicioView
+import com.example.proyectospotify.ui.pantalla.SongScreen
 import com.example.proyectospotify.ui.views.InicioViewModel
 import com.example.proyectospotify.ui.views.ScaffoldViewModel
 
@@ -30,10 +32,10 @@ fun GrafoNavegacion() {
     Scaffold(topBar = { BarraSuperior(titulo = if (rutaActual == Rutas.Pantallas.ruta) "REPRODUCIR" else "FOTO") },
         bottomBar = { BarraInferior(funcionNavegarPlayer = {
             // solo puedo ir pa atras si estoy en...
-            navController.popBackStack()
+            navController.navigate(Rutas.Pantallas.ruta)
         }
             , funcionNavegarFoto = {
-                navController.navigate(Rutas.Pantallas.ruta)
+                navController.navigate(Rutas.Buscador.ruta)
             })},
         content = {
             // paddingValues representa los dp que hay para evitar que el contenido se solape con las barras
@@ -48,6 +50,12 @@ fun GrafoNavegacion() {
                 NavHost(navController = navController,startDestination = Rutas.Pantallas.ruta){
                     composable(Rutas.Pantallas.ruta){
                         InicioView(navController=navController)
+                    }
+                    composable(Rutas.Cancion.ruta){
+                        SongScreen()
+                    }
+                    composable(Rutas.Buscador.ruta){
+                        Buscador()
                     }
                 }
 

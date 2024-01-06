@@ -9,10 +9,12 @@ import androidx.annotation.AnyRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.room.util.copy
 import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.dataclass.Canciones
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class SongViewModel:ViewModel() {
+
     private val _songState: MutableStateFlow<ExoPlayer?> = MutableStateFlow(null)
     val songState = _songState.asStateFlow()
     //Cancion actual
@@ -85,7 +88,7 @@ class SongViewModel:ViewModel() {
 
     fun PausarOSeguirMusica() {
         /* TODO: Si el reproductor esta sonando, lo pauso. Si no, lo reproduzco */
-        if(!_songState.value!!.isPlaying ){
+        if(!_songState.value!!.isPlaying){
             _songState.value!!.play()
         }else{
             _songState.value!!.pause()
@@ -114,6 +117,39 @@ class SongViewModel:ViewModel() {
 
         _songState.value!!.prepare()
         _songState.value!!.playWhenReady = true
+
+    }
+    fun previousSong(context: Context) {
+
+        /* TODO: 1 - Cambiar la cancion actual y parar el mediaPlayer
+         *  2 - Limpiar al _exoPlayer de los mediaItems que tenga
+         *  3 - Crear mediaItem con la cancion actual
+         *  4 - Establecer dicho mediaItem
+         *  5 - Preparar el reproductor y activar el playWhenReady
+        */
+        if(_actual.value == R.raw.hellfire){
+            _actual.value = R.raw.extras
+        }else{
+            _actual.value = R.raw.hellfire
+        }
+
+        _songState.value!!.stop()
+        _songState.value!!.clearMediaItems()
+
+        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value ))
+        _songState.value!!.setMediaItem(mediaItem)
+
+        _songState.value!!.prepare()
+        _songState.value!!.playWhenReady = true
+
+    }
+    fun repeat(){
+        System.out.println("Texto de ejemplo")
+        _songState.value!!.repeatMode=SimpleExoPlayer.REPEAT_MODE_ALL
+        _songState.value!!.playWhenReady = true
+    }
+    fun shuffle(){
+        System.out.println("Numero aleatorio")
 
     }
     @Throws(Resources.NotFoundException::class)

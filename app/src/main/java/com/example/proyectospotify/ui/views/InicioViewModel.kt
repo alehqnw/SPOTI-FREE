@@ -40,6 +40,14 @@ class InicioViewModel: ViewModel() {
     fun CargaCanciones(){
         _canciones.value.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.ggst))
         _canciones.value.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.ggst))
+        _canciones.value.add(Canciones("Like a Weed, Naturally, as a Matter of Course","ROCK",R.raw.likeaweed,R.drawable.likeaweed))
+        _canciones.value.add(Canciones("ALEMAN","???",R.raw.aleman,R.drawable.aleman))
+        _canciones.value.add(Canciones("WANDA","???",R.raw.wanda,R.drawable.quevedo))
+        _canciones.value.add(Canciones("QUEVEDOBZRP","???",R.raw.quevedobzrp,R.drawable.bzrpportada))
+        _canciones.value.add(Canciones("MANDANGA","TROLL",R.raw.mandanga,R.drawable.trollfaceportada))
+        _canciones.value.add(Canciones("LUCESAZULES","?????",R.raw.lucesazules,R.drawable.trollfaceportada))
+        _canciones.value.add(Canciones("ELADIOCARRION","????",R.raw.eladiocarrion,R.drawable.trollfaceportada))
+        _canciones.value.add(Canciones("DILLOM","????",R.raw.dillom,R.drawable.trollfaceportada))
     }
 
     @Composable
@@ -49,17 +57,19 @@ class InicioViewModel: ViewModel() {
             .padding(10.dp)
             ,colors = CardDefaults.cardColors(Color.Red)
         ) {
-            Box{
+            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 0.dp, vertical = 10.dp)){
                 Image(
                     painter = painterResource(id = Imagen),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(horizontal = 0.dp, vertical = 10.dp)
                         .size(150.dp)
                 )
                 //Falta la banda negra del texto
-                    Text(text = Titulo, color = Color.White, modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp).background(Color.Black).align(Alignment.BottomCenter))
-
+                Text(text = Titulo, color = Color.White,
+                    modifier = Modifier.
+                    background(Color.Black).
+                    align(Alignment.CenterHorizontally).
+                    fillMaxWidth())
             }
         }
     }
