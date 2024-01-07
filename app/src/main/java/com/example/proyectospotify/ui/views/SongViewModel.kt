@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.media.browse.MediaBrowser
 import android.net.Uri
 import androidx.annotation.AnyRes
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,18 +21,16 @@ import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.dataclass.Canciones
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class SongViewModel:ViewModel() {
+open class SongViewModel:ViewModel() {
 
     private val _songState: MutableStateFlow<ExoPlayer?> = MutableStateFlow(null)
     val songState = _songState.asStateFlow()
-    //Cancion actual
-    private val _actual = MutableStateFlow(R.raw.hellfire)
-    val actual = _actual.asStateFlow()
 
     //Duracion de la cancion
     private val _duracion = MutableStateFlow(0)
@@ -41,13 +40,31 @@ class SongViewModel:ViewModel() {
     private val _progreso = MutableStateFlow(0)
     val progreso = _progreso.asStateFlow()
 
+    private val _canciones: MutableList<Canciones> = mutableListOf()
+    private val _cancionesFlow = MutableStateFlow(_canciones)
+    val canciones: StateFlow<List<Canciones>> = _cancionesFlow
+
+    var _indice = 5
+    private val _cancion = MutableStateFlow(canciones)
+    val cancion = _cancion.asStateFlow()
+
+    //Cancion actual
+    private val _actual = MutableStateFlow(R.raw.extras)
+    val actual = _actual.asStateFlow()
+    fun CargaCanciones(
+        Canciones:ArrayList<Canciones>){
+        _canciones.addAll(Canciones.toMutableList())
+    }
+    fun CancionCurso(): Canciones {
+        return _canciones[_indice]
+    }
     fun crearExo(context: Context){
         _songState.value = ExoPlayer.Builder(context).build()
         _songState.value!!.prepare()
         _songState.value!!.playWhenReady = true
     }
     fun play(context:Context){
-        val mediaItem = MediaItem.fromUri(obtenerRuta(context,R.raw.hellfire))
+        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value))
         _songState.value!!.setMediaItem(mediaItem)
 
         _songState.value!!.addListener(object : Player.Listener{
@@ -79,6 +96,11 @@ class SongViewModel:ViewModel() {
             }
         }
         )
+        if(!_songState.value!!.isPlaying){
+            _songState.value!!.play()
+        }else{
+            _songState.value!!.pause()
+        }
     }
     // Este método se llama cuando el VM se destruya.
     override fun onCleared() {
@@ -86,8 +108,9 @@ class SongViewModel:ViewModel() {
         super.onCleared()
     }
 
-    fun PausarOSeguirMusica() {
+    fun PausarOSeguirMusica(context: Context) {
         /* TODO: Si el reproductor esta sonando, lo pauso. Si no, lo reproduzco */
+
         if(!_songState.value!!.isPlaying){
             _songState.value!!.play()
         }else{
@@ -103,10 +126,11 @@ class SongViewModel:ViewModel() {
          *  4 - Establecer dicho mediaItem
          *  5 - Preparar el reproductor y activar el playWhenReady
         */
-        if(_actual.value == R.raw.hellfire){
-            _actual.value = R.raw.extras
+        _indice++
+        if(_indice >= _canciones.size){
+            _indice = 0
         }else{
-            _actual.value = R.raw.hellfire
+            _actual.value =_canciones[_indice].Cancion
         }
 
         _songState.value!!.stop()
@@ -114,10 +138,8 @@ class SongViewModel:ViewModel() {
 
         val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value ))
         _songState.value!!.setMediaItem(mediaItem)
-
         _songState.value!!.prepare()
         _songState.value!!.playWhenReady = true
-
     }
     fun previousSong(context: Context) {
 
@@ -127,10 +149,13 @@ class SongViewModel:ViewModel() {
          *  4 - Establecer dicho mediaItem
          *  5 - Preparar el reproductor y activar el playWhenReady
         */
-        if(_actual.value == R.raw.hellfire){
-            _actual.value = R.raw.extras
+
+        //Si el índice es menor que 0 (-1) pasa a la última cancion
+        _indice--
+        if(_indice <= 0){
+            _indice = _canciones.size
         }else{
-            _actual.value = R.raw.hellfire
+            _actual.value =_canciones[_indice].Cancion
         }
 
         _songState.value!!.stop()

@@ -3,6 +3,7 @@ package com.example.proyectospotify.ui.pantalla
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,20 +31,11 @@ fun InicioView(navController: NavController){
         val ViewModel:InicioViewModel = viewModel()
         ViewModel.CargaCanciones()
         val canciones:ArrayList<Canciones> = ViewModel.canciones.value
-        LazyRow(modifier = Modifier
-            .weight(2f)
-            .fillMaxWidth()
-            .background(Color.Black)){
-            items(1){
-                //Text(text = canciones[0].Titulo)
-                //Meter canciones. de momento habrá un texto
-                for (canciones1 in canciones) {
-                    Button(onClick = { navController.navigate(Rutas.Cancion.ruta) },Modifier.fillMaxWidth(),colors = ButtonDefaults.buttonColors(Color.Black)) {
-                        ViewModel.CancionesCard(Titulo = canciones1.Titulo, Imagen = canciones1.Imagen)
-                    }
-
-                }
+        Row(){
+            Button(onClick = { navController.navigate(Rutas.Cancion.ruta) }) {
+                ViewModel.CancionesCard(Titulo = "", Imagen = R.drawable.spotifree)
             }
+
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.proyectospotify.ui.dataclass.Canciones
 import com.example.proyectospotify.ui.modelo.Rutas
 import com.example.proyectospotify.ui.pantalla.BarraInferior
 import com.example.proyectospotify.ui.pantalla.BarraSuperior
@@ -28,8 +29,14 @@ fun GrafoNavegacion() {
     val navController = rememberNavController()
     val entradaNavActual by navController.currentBackStackEntryAsState()
     val viewModelScaffold : ScaffoldViewModel = viewModel()
+
+    val viewModelInicio:InicioViewModel = viewModel()
+    viewModelInicio.CargaCanciones()
     val rutaActual = entradaNavActual?.destination?.route
-    Scaffold(topBar = { BarraSuperior(titulo = if (rutaActual == Rutas.Pantallas.ruta) "REPRODUCIR" else "FOTO") },
+
+    val Array:ArrayList<Canciones> = viewModelInicio.DescargaCanciones()
+    println(Array[0].Titulo)
+    Scaffold(topBar = { BarraSuperior(titulo = if (rutaActual == Rutas.Pantallas.ruta) "REPRODUCIR" else "") },
         bottomBar = { BarraInferior(funcionNavegarPlayer = {
             // solo puedo ir pa atras si estoy en...
             navController.navigate(Rutas.Pantallas.ruta)
@@ -52,7 +59,7 @@ fun GrafoNavegacion() {
                         InicioView(navController=navController)
                     }
                     composable(Rutas.Cancion.ruta){
-                        SongScreen()
+                        SongScreen(Array)
                     }
                     composable(Rutas.Buscador.ruta){
                         Buscador()
