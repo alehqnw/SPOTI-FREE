@@ -28,14 +28,8 @@ import com.example.proyectospotify.ui.views.ScaffoldViewModel
 fun GrafoNavegacion() {
     val navController = rememberNavController()
     val entradaNavActual by navController.currentBackStackEntryAsState()
-    val viewModelScaffold : ScaffoldViewModel = viewModel()
-
-    val viewModelInicio:InicioViewModel = viewModel()
-    viewModelInicio.CargaCanciones()
+    //val viewModelScaffold : ScaffoldViewModel = viewModel()
     val rutaActual = entradaNavActual?.destination?.route
-
-    val Array:ArrayList<Canciones> = viewModelInicio.DescargaCanciones()
-    println(Array[0].Titulo)
     Scaffold(topBar = { BarraSuperior(titulo = if (rutaActual == Rutas.Pantallas.ruta) "REPRODUCIR" else "") },
         bottomBar = { BarraInferior(funcionNavegarPlayer = {
             // solo puedo ir pa atras si estoy en...
@@ -59,7 +53,7 @@ fun GrafoNavegacion() {
                         InicioView(navController=navController)
                     }
                     composable(Rutas.Cancion.ruta){
-                        SongScreen(Array)
+                        SongScreen()
                     }
                     composable(Rutas.Buscador.ruta){
                         Buscador()
@@ -70,9 +64,4 @@ fun GrafoNavegacion() {
 
         }
     )
-}
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun preview(){
-    GrafoNavegacion()
 }

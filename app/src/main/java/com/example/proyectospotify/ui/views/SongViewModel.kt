@@ -41,19 +41,27 @@ open class SongViewModel:ViewModel() {
     val progreso = _progreso.asStateFlow()
 
     private val _canciones: MutableList<Canciones> = mutableListOf()
-    private val _cancionesFlow = MutableStateFlow(_canciones)
-    val canciones: StateFlow<List<Canciones>> = _cancionesFlow
+    var _indice = 0
 
-    var _indice = 5
-    private val _cancion = MutableStateFlow(canciones)
-    val cancion = _cancion.asStateFlow()
 
     //Cancion actual
-    private val _actual = MutableStateFlow(R.raw.extras)
+    private val _actual = MutableStateFlow(0)
     val actual = _actual.asStateFlow()
-    fun CargaCanciones(
-        Canciones:ArrayList<Canciones>){
-        _canciones.addAll(Canciones.toMutableList())
+    fun CargaCanciones(){
+        _canciones.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.ggst,"4:31"))
+        _canciones.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.ggst,"5:36"))
+        _canciones.add(Canciones("Like a Weed","ROCK",R.raw.likeaweed,R.drawable.likeaweed,"4:45"))
+        _canciones.add(Canciones("ALEMAN","TRAP",R.raw.aleman,R.drawable.aleman,"2:57"))
+        _canciones.add(Canciones("WANDA","REGGAETON",R.raw.wanda,R.drawable.quevedo,"3:00"))
+        _canciones.add(Canciones("QUEVEDOBZRP","REGGAETON",R.raw.quevedobzrp,R.drawable.bzrpportada,"3:24"))
+        _canciones.add(Canciones("MANDANGA","TROLL",R.raw.mandanga,R.drawable.mandanga,"2:50"))
+        _canciones.add(Canciones("LUCESAZULES","REGGAETON",R.raw.lucesazules,R.drawable.quevedo,"2:44"))
+        _canciones.add(Canciones("ELADIOCARRION","TRAP",R.raw.eladiocarrion,R.drawable.heladio,"2:52"))
+        _canciones.add(Canciones("DILLOM","TRAP",R.raw.dillom,R.drawable.dillom,"2:45"))
+        _canciones.add(Canciones("CABALLOHOMOSEXUAL","TROLL",R.raw.caballohomosexual,R.drawable.caballo,"0:46"))
+        _canciones.add(Canciones("CHAMBA","TROLL",R.raw.chamba,R.drawable.chambaportada,"2:45"))
+
+        _actual.value=_canciones[_indice].Cancion
     }
     fun CancionCurso(): Canciones {
         return _canciones[_indice]
@@ -61,25 +69,27 @@ open class SongViewModel:ViewModel() {
     fun crearExo(context: Context){
         _songState.value = ExoPlayer.Builder(context).build()
         _songState.value!!.prepare()
-        _songState.value!!.playWhenReady = true
+        _songState.value!!.playWhenReady
     }
     fun play(context:Context){
         val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value))
         _songState.value!!.setMediaItem(mediaItem)
-
+        _songState.value!!.prepare()
+        _songState.value!!.playWhenReady = true
         _songState.value!!.addListener(object : Player.Listener{
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if(playbackState == Player.STATE_READY){
                     // El Player está preparado para empezar la reproducción.
                     // Si playWhenReady es true, empezará a sonar la música.
 
-                    _duracion.value = _songState.value!!.duration.toInt()
+                    _duracion.value = _songState.value!!.duration.toInt()/1000
 
                     viewModelScope.launch {
                         /* TODO: Actualizar el progreso usando currentPosition cada segundo */
                         while(isActive){
-                            _progreso.value = _songState.value!!.currentPosition.toInt()
+                            _progreso.value = _songState.value!!.currentPosition.toInt()/1000
                             delay(1000)
+
                         }
 
                     }
@@ -96,11 +106,8 @@ open class SongViewModel:ViewModel() {
             }
         }
         )
-        if(!_songState.value!!.isPlaying){
-            _songState.value!!.play()
-        }else{
-            _songState.value!!.pause()
-        }
+
+
     }
     // Este método se llama cuando el VM se destruya.
     override fun onCleared() {
@@ -110,9 +117,8 @@ open class SongViewModel:ViewModel() {
 
     fun PausarOSeguirMusica(context: Context) {
         /* TODO: Si el reproductor esta sonando, lo pauso. Si no, lo reproduzco */
-
         if(!_songState.value!!.isPlaying){
-            _songState.value!!.play()
+            _songState.value!!.playWhenReady=true
         }else{
             _songState.value!!.pause()
         }
@@ -127,12 +133,11 @@ open class SongViewModel:ViewModel() {
          *  5 - Preparar el reproductor y activar el playWhenReady
         */
         _indice++
-        if(_indice >= _canciones.size){
-            _indice = 0
-        }else{
-            _actual.value =_canciones[_indice].Cancion
-        }
+        if(_indice > _canciones.lastIndex){
+            _indice=0
 
+        }
+        _actual.value =_canciones[_indice].Cancion
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 
@@ -140,6 +145,9 @@ open class SongViewModel:ViewModel() {
         _songState.value!!.setMediaItem(mediaItem)
         _songState.value!!.prepare()
         _songState.value!!.playWhenReady = true
+
+
+
     }
     fun previousSong(context: Context) {
 
@@ -152,8 +160,9 @@ open class SongViewModel:ViewModel() {
 
         //Si el índice es menor que 0 (-1) pasa a la última cancion
         _indice--
-        if(_indice <= 0){
-            _indice = _canciones.size
+        if(_indice  < 0){
+            _indice = _canciones.lastIndex
+            _actual.value =_canciones[_indice].Cancion
         }else{
             _actual.value =_canciones[_indice].Cancion
         }
@@ -169,13 +178,24 @@ open class SongViewModel:ViewModel() {
 
     }
     fun repeat(){
-        System.out.println("Texto de ejemplo")
-        _songState.value!!.repeatMode=SimpleExoPlayer.REPEAT_MODE_ALL
-        _songState.value!!.playWhenReady = true
-    }
-    fun shuffle(){
-        System.out.println("Numero aleatorio")
 
+        _songState.value!!.repeatMode=SimpleExoPlayer.REPEAT_MODE_ALL
+    }
+    fun shuffle(context:Context){
+        var temporal=(Math.random()*_canciones.lastIndex).toInt()
+        if(temporal>= _indice){
+            temporal++
+        }
+        _indice=temporal
+        _actual.value =_canciones[_indice].Cancion
+        _songState.value!!.stop()
+        _songState.value!!.clearMediaItems()
+
+        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value ))
+        _songState.value!!.setMediaItem(mediaItem)
+
+        _songState.value!!.prepare()
+        _songState.value!!.playWhenReady = true
     }
     @Throws(Resources.NotFoundException::class)
     fun obtenerRuta(context: Context, @AnyRes resId: Int): Uri {
