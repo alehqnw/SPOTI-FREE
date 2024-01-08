@@ -10,6 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +26,11 @@ fun Buscador() {
     var searchText by remember{ mutableStateOf("")}
     var estaActivoSB by remember{ mutableStateOf(false) }//Variable del SearchBar
     val ViewModel:InicioViewModel = viewModel()
-    ViewModel.CargaCanciones()
+    LaunchedEffect(key1 = Unit){
+        ViewModel.CargaCanciones()
+    }
+
+
     val ListaCanciones = ViewModel.canciones.value
     Column (modifier = Modifier.fillMaxWidth()){
         SearchBar(
