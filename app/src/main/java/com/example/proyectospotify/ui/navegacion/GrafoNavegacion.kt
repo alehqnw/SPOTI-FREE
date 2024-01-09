@@ -30,14 +30,33 @@ fun GrafoNavegacion() {
     val entradaNavActual by navController.currentBackStackEntryAsState()
     //val viewModelScaffold : ScaffoldViewModel = viewModel()
     val rutaActual = entradaNavActual?.destination?.route
-    Scaffold(topBar = { BarraSuperior(titulo = if (rutaActual == Rutas.Pantallas.ruta) "REPRODUCIR" else "") },
-        bottomBar = { BarraInferior(funcionNavegarPlayer = {
+    Scaffold(topBar = {if(rutaActual!=Rutas.Cancion.ruta){
+        BarraSuperior(titulo =
+        when(rutaActual){
+            Rutas.Pantallas.ruta ->{
+                "PANTALLA DE INICIO"
+            }
+            Rutas.Cancion.ruta->{
+                ""
+            }
+            Rutas.Buscador.ruta->{
+                "BUSCADOR"
+            }
+            else->{
+                "PANTALLA NO ESPERADA"
+            }
+        })
+    }
+
+                      },
+        bottomBar = { if(rutaActual!=Rutas.Cancion.ruta){
+            BarraInferior(funcionNavegarPlayer = {
             // solo puedo ir pa atras si estoy en...
             navController.navigate(Rutas.Pantallas.ruta)
         }
             , funcionNavegarFoto = {
                 navController.navigate(Rutas.Buscador.ruta)
-            })},
+            })}},
         content = {
             // paddingValues representa los dp que hay para evitar que el contenido se solape con las barras
                 paddingValues ->

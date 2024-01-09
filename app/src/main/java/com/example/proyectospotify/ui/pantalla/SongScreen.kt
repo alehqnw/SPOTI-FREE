@@ -1,6 +1,7 @@
 package com.example.proyectospotify.ui.pantalla
 
 import android.annotation.SuppressLint
+import android.graphics.Paint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,13 +30,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,13 +54,15 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
+
+@SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
 fun SongScreen(){
     val viewModel: SongViewModel = viewModel()
     // Obtenemos el estado de la canción desde el ViewModel
     val contexto = LocalContext.current
     val songstate = viewModel.songState.collectAsState().value
+    val corutinaScope = rememberCoroutineScope()
 
     // Creamos una columna que ocupará todo el espacio disponible
     LaunchedEffect(key1 = Unit){
@@ -67,7 +74,9 @@ fun SongScreen(){
     if(songstate != null){
         var cancionEncurso by remember { mutableStateOf(viewModel.CancionCurso())}
         println(viewModel._indice)
-
+        corutinaScope.launch {
+            cancionEncurso=viewModel.CancionCurso()
+        }
         //viewModel.play(contexto)
 
         Column(
@@ -75,21 +84,23 @@ fun SongScreen(){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Mostramos el título de la canción
-            Text(
-                text = cancionEncurso.Titulo,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
             // Mostramos la imagen de la canción
 
             Image(
                 painter = painterResource(cancionEncurso.Imagen),
                 contentDescription = null,
-                modifier = Modifier.size(425.dp)
+                modifier = Modifier.size(325.dp)
             )
-
+            // Mostramos el título de la canción
+            Text(
+                text = cancionEncurso.Titulo,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier
+                    .padding(start = 32.dp, top = 16.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Left,
+                fontSize = 25.sp
+            )
             // Mostramos una barra deslizante para controlar el progreso de la canción
             val progreso = viewModel.progreso.collectAsState().value.toFloat()
             //val duracionTotal = viewModel.duracion.collectAsState().value.toFloat()
@@ -107,9 +118,6 @@ fun SongScreen(){
                     .fillMaxWidth()
                     .widthIn(0.dp, 300.dp)
             )
-            if(viewModel.progreso.collectAsState().value.toFloat() == viewModel.duracion.collectAsState().value.toFloat()){
-                cancionEncurso=viewModel.CancionCurso()
-            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -130,8 +138,15 @@ fun SongScreen(){
 
                 // Botón para reproducir/pausar la canción
                 IconButton(onClick = { viewModel.PausarOSeguirMusica(contexto) }) {
+                    if(viewModel.progreso.collectAsState().value.toFloat() == viewModel.duracion.collectAsState().value.toFloat()){
+                        cancionEncurso=viewModel.CancionCurso()
+                    }
                     if (viewModel.songState.value?.isPlaying == true) {
-                        Icon(Icons.Filled.Warning, contentDescription = null)
+
+                        Icon(painterResource(id = R.drawable.ic_pause), contentDescription = null,
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(Color.Red))
                     } else {
                         Icon(
                             painterResource(id = R.drawable.playarrownegro)
@@ -154,7 +169,7 @@ fun SongScreen(){
             ) {
                 // Botón para activar/desactivar el shuffle
                 IconButton(onClick = { viewModel.shuffle(contexto);cancionEncurso=viewModel.CancionCurso() }) {
-                    Icon(Icons.Filled.Star, contentDescription = null)
+                    Icon(painterResource(id = R.drawable.ic_shuffle), contentDescription = null)
                 }
 
                 // Botón para activar/desactivar el repeat

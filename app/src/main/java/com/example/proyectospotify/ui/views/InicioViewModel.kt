@@ -38,8 +38,8 @@ class InicioViewModel: ViewModel() {
         _nombre.value = nuevoNombre
     }
     fun CargaCanciones(){
-        _canciones.value.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.ggst,"4:31"))
-        _canciones.value.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.ggst,"5:36"))
+        _canciones.value.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.hellfire,"4:31"))
+        _canciones.value.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.extras,"5:36"))
         _canciones.value.add(Canciones("Like a Weed","ROCK",R.raw.likeaweed,R.drawable.likeaweed,"4:45"))
         _canciones.value.add(Canciones("ALEMAN","TRAP",R.raw.aleman,R.drawable.aleman,"2:57"))
         _canciones.value.add(Canciones("WANDA","REGGAETON",R.raw.wanda,R.drawable.quevedo,"3:00"))

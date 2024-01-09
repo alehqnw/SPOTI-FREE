@@ -48,8 +48,8 @@ open class SongViewModel:ViewModel() {
     private val _actual = MutableStateFlow(0)
     val actual = _actual.asStateFlow()
     fun CargaCanciones(){
-        _canciones.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.ggst,"4:31"))
-        _canciones.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.ggst,"5:36"))
+        _canciones.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.hellfire,"4:31"))
+        _canciones.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.extras,"5:36"))
         _canciones.add(Canciones("Like a Weed","ROCK",R.raw.likeaweed,R.drawable.likeaweed,"4:45"))
         _canciones.add(Canciones("ALEMAN","TRAP",R.raw.aleman,R.drawable.aleman,"2:57"))
         _canciones.add(Canciones("WANDA","REGGAETON",R.raw.wanda,R.drawable.quevedo,"3:00"))
@@ -179,7 +179,7 @@ open class SongViewModel:ViewModel() {
     }
     fun repeat(){
 
-        _songState.value!!.repeatMode=SimpleExoPlayer.REPEAT_MODE_ALL
+        _songState.value!!.repeatMode=ExoPlayer.REPEAT_MODE_ONE
     }
     fun shuffle(context:Context){
         var temporal=(Math.random()*_canciones.lastIndex).toInt()
