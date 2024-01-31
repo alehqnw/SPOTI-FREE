@@ -57,15 +57,20 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
-fun SongScreen(){
+fun SongScreen(indice:Int?){
     val viewModel: SongViewModel = viewModel()
     // Obtenemos el estado de la canción desde el ViewModel
     val contexto = LocalContext.current
     val songstate = viewModel.songState.collectAsState().value
     val corutinaScope = rememberCoroutineScope()
 
+
     // Creamos una columna que ocupará todo el espacio disponible
     LaunchedEffect(key1 = Unit){
+        if(indice!=null){
+            viewModel._indice=indice
+            println("SongScreen indice "+viewModel._indice)
+        }
         viewModel.crearExo(contexto)
         viewModel.CargaCanciones()
         viewModel.play(contexto)

@@ -71,11 +71,12 @@ fun GrafoNavegacion() {
                     composable(Rutas.Pantallas.ruta){
                         InicioView(navController=navController)
                     }
-                    composable(Rutas.Cancion.ruta){
-                        SongScreen()
+                    composable(Rutas.Cancion.ruta+"/{IndiceRecibido}"){
+                        val Indice = it.arguments?.getString("IndiceRecibido")?.toInt()
+                        SongScreen(Indice)
                     }
                     composable(Rutas.Buscador.ruta){
-                        Buscador()
+                        Buscador(navController=navController)
                     }
                 }
 
