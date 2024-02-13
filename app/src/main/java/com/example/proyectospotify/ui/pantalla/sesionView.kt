@@ -1,28 +1,20 @@
 package com.example.proyectospotify.ui.pantalla
 
 import android.annotation.SuppressLint
-import android.graphics.Paint.Align
-import android.graphics.fonts.FontStyle
-import android.text.Layout.Alignment
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,17 +29,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.dataclass.Dialogo
-import com.example.proyectospotify.ui.modelo.Rutas
+import com.example.proyectospotify.ui.views.BBDD
 import com.example.proyectospotify.ui.views.sesionViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
 fun sesionView(navController: NavController) {
@@ -58,6 +48,7 @@ fun sesionView(navController: NavController) {
     var sesionviewModel:sesionViewModel = viewModel()
     LaunchedEffect(key1 = Unit){
         sesionviewModel.cargarBD()
+        BBDD.CargaCanciones()
     }
     Column(modifier = Modifier
         .fillMaxSize()
@@ -69,7 +60,8 @@ fun sesionView(navController: NavController) {
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround){
                 Text(text = "Inicio de sesión en SPICETIFY", fontSize = 30.sp,
-                    fontStyle = androidx.compose.ui.text.font.FontStyle.Normal)
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Normal,
+                    color=Color.White)
             }
         }
         Column(modifier = Modifier
@@ -89,23 +81,23 @@ fun sesionView(navController: NavController) {
 
                 OutlinedTextField(
                     value = usuario,
-                    onValueChange = { usuario = it  },
+                    onValueChange = { usuario = it;sesionviewModel.actualizaUsuario(usuario)  },
                     label= { Text(text = "Usuario") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 25.dp),
-                    colors = TextFieldDefaults.colors(Color.White),
+                    colors = TextFieldDefaults.colors(Color.DarkGray),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     singleLine = true)
 
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it  },
+                    onValueChange = { password = it;sesionviewModel.actualizaPassword(password)  },
                     label= { Text(text = "Contraseña")},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 25.dp),
-                    colors = TextFieldDefaults.colors(Color.White),
+                    colors = TextFieldDefaults.colors(Color.DarkGray),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done),
@@ -118,21 +110,26 @@ fun sesionView(navController: NavController) {
                     Button(
                         onClick = {abrirDialogo=true},
                         colors = ButtonDefaults.buttonColors(Color.White)) {
-                        Text(text = "Crear usuario")
+                        Text(text = "Crear usuario",color=Color.Black)
                             if(abrirDialogo){
                                 Dialogo(
                                     openDialog = {abrirDialogo=it},
                                     userConfirm ={usuario=it},
                                     passwordConfirm = {password=it})
-
+                                if(!usuario.isEmpty() && !password.isEmpty()){
+                                    sesionviewModel.actualizaUsuario(usuario)
+                                    sesionviewModel.actualizaPassword(password)
+                                    sesionviewModel.AnyadirCreeden(usuario,password)
+                                }
                             }
-                        sesionviewModel.AnyadirCreeden(usuario,password)
+
+
                     }
 
                     Button(
                         onClick = { sesionviewModel.compruebaCreeden(navController) },
                         colors = ButtonDefaults.buttonColors(Color.White)) {
-                        Text(text = "Iniciar sesión")
+                        Text(text = "Iniciar sesión",color=Color.Black)
                     }
                 }
             }

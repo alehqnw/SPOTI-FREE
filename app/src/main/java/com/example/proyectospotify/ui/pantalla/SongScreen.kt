@@ -1,17 +1,10 @@
 package com.example.proyectospotify.ui.pantalla
 
 import android.annotation.SuppressLint
-import android.graphics.Paint
-import android.graphics.Paint.Align
-import android.os.Bundle
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,16 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,24 +35,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
-
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
 import com.example.proyectospotify.R
-import com.example.proyectospotify.ui.dataclass.Canciones
 import com.example.proyectospotify.ui.views.BBDD
-import com.example.proyectospotify.ui.views.InicioViewModel
 import com.example.proyectospotify.ui.views.SongViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,7 +51,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SongScreen(navController: NavController,indice:Int?){
     val viewModel: SongViewModel = viewModel()
-    val basedatos by remember{ mutableStateOf(BBDD())}
     // Obtenemos el estado de la canción desde el ViewModel
     val contexto = LocalContext.current
     val songstate = viewModel.songState.collectAsState().value
@@ -80,7 +58,6 @@ fun SongScreen(navController: NavController,indice:Int?){
     var playPause by remember{ mutableStateOf(false)}
     var loopBool by remember{ mutableStateOf(false)}
     var addBool by remember{ mutableStateOf(false)}
-    val bundle = null
     // Creamos una columna que ocupará todo el espacio disponible
     LaunchedEffect(key1 = Unit){
         if(indice!=null){
@@ -93,13 +70,17 @@ fun SongScreen(navController: NavController,indice:Int?){
         viewModel.play(contexto)
     }
 
+
     if(songstate != null){
         var cancionEncurso by remember { mutableStateOf(viewModel.CancionCurso())}
         corutinaScope.launch {
             cancionEncurso=viewModel.CancionCurso()
         }
         //viewModel.play(contexto)
-
+        LaunchedEffect(key1 = cancionEncurso){
+            loopBool=false
+            addBool=false
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -189,7 +170,9 @@ fun SongScreen(navController: NavController,indice:Int?){
             // Creamos una segunda fila para los botones de shuffle y repeat
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 50.dp)
             ) {
                 // Botón para activar/desactivar el shuffle
                 IconButton(onClick = { viewModel.shuffle(contexto);cancionEncurso=viewModel.CancionCurso() }) {
@@ -209,17 +192,18 @@ fun SongScreen(navController: NavController,indice:Int?){
                         }
                     }
                 }
-                IconButton(onClick = {addBool!=addBool},
+                IconButton(onClick = {addBool=!addBool},
                     modifier = Modifier.background(if (addBool) Color.Red else Color.Transparent)
                 ) {
                     Icon(Icons.Filled.Create, contentDescription = null)
                     LaunchedEffect(addBool){
                         if(addBool){
-                            basedatos.addPersona(cancionEncurso)
+                            BBDD.addPersona(cancionEncurso)
 
                         }else{
-                            basedatos.delPersona(cancionEncurso)
+                            BBDD.delPersona(cancionEncurso)
                         }
+                        println(BBDD.getPersona())
                     }
 
                 }

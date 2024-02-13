@@ -2,19 +2,15 @@ package com.example.proyectospotify.ui.navegacion
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.proyectospotify.ui.dataclass.Canciones
+import androidx.navigation.compose.rememberNavController
 import com.example.proyectospotify.ui.modelo.Rutas
 import com.example.proyectospotify.ui.pantalla.BarraInferior
 import com.example.proyectospotify.ui.pantalla.BarraSuperior
@@ -23,8 +19,6 @@ import com.example.proyectospotify.ui.pantalla.InicioView
 import com.example.proyectospotify.ui.pantalla.SongListView
 import com.example.proyectospotify.ui.pantalla.SongScreen
 import com.example.proyectospotify.ui.pantalla.sesionView
-import com.example.proyectospotify.ui.views.InicioViewModel
-import com.example.proyectospotify.ui.views.ScaffoldViewModel
 
 @Composable
 fun GrafoNavegacion() {
@@ -65,8 +59,7 @@ fun GrafoNavegacion() {
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
-                color = MaterialTheme.colorScheme.background
+                    .padding(paddingValues)
             ) {
 
                 NavHost(navController = navController,startDestination = Rutas.InicioSesion.ruta){

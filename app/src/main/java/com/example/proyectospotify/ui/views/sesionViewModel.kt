@@ -22,29 +22,29 @@ class sesionViewModel: ViewModel() {
     val password = _password.asStateFlow()
 
 
-    private val _basedatos = BBDD()
     val falsoEstrue = MutableStateFlow(false)
     fun cargarBD(){
-        _basedatos.CargaUsers()
+        BBDD.CargaUsers()
     }
-    fun actualizaUsuario(Nusuario:String,Npassword:String){
+    fun actualizaUsuario(Nusuario:String){
         _usuario.value=Nusuario
+    }
+    fun actualizaPassword(Npassword: String){
         _password.value=Npassword
     }
     fun AnyadirCreeden(Nusuario:String,Npassword:String){
-        _basedatos.AnyadirUsers(Nusuario)
-        _basedatos.AnyadirPassword(Npassword)
+        BBDD.AnyadirUsers(Nusuario)
+        BBDD.AnyadirPassword(Npassword)
     }
     fun compruebaCreeden(navController: NavController){
-        val tamanyo = _basedatos._canciones.size
-        _basedatos.listaUsers.forEachIndexed(){indice,it->
+        for (i in 0 until BBDD.listaUsers.size){
             println(_usuario.value + _password.value)
-            if(_basedatos.listaUsers[indice] == _usuario.value && _basedatos.listaPassowrd[indice] == _password.value){
-                println("USUARIO "+_usuario.value + "contrasña "+_password.value)
-                println("bd" +_basedatos.listaUsers[indice]+_basedatos.listaPassowrd[indice])
+            if((BBDD.listaUsers[i].equals(_usuario.value)) && (BBDD.listaPassowrd[i].equals(_password.value))){
                 navController.navigate(Rutas.Pantallas.ruta)
+                break
             }else{
                 falsoEstrue.value=true
+                println("Es falso "+BBDD.listaUsers[i] + " passsword " +BBDD.listaPassowrd[i])
             }
 
         }

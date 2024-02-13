@@ -1,14 +1,15 @@
 package com.example.proyectospotify.ui.views
 
-import androidx.lifecycle.ViewModel
+
 import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.dataclass.Canciones
 
-class BBDD: ViewModel() {
+object BBDD {
     val _canciones : MutableList<Canciones> = mutableListOf()
     val listaUsers : MutableList<String> = mutableListOf()
     val listaPassowrd : MutableList<String> = mutableListOf()
     val cancionesPersona : MutableList<Canciones> = mutableListOf()
+    private var logeado: Int? =0
     fun CargaUsers(){
         listaUsers.add("Alejandro")
         listaUsers.add("Alverto")
@@ -17,11 +18,29 @@ class BBDD: ViewModel() {
         listaPassowrd.add("12345")
         listaPassowrd.add("123456")
     }
+    fun getPersona():MutableList<Canciones>{
+        return cancionesPersona
+    }
     fun addPersona(canciones:Canciones){
         cancionesPersona.add(canciones)
     }
     fun delPersona(canciones: Canciones){
-        cancionesPersona.remove(canciones)
+        val tempLista = ArrayList(cancionesPersona)
+        tempLista.forEach(){
+            if(it.Titulo == canciones.Titulo){
+                cancionesPersona.remove(it)
+            }
+        }
+    }
+    fun setLogeado(user:Int){
+        logeado=user
+        cancionesPersona.clear()
+    }
+    fun getLogeado():Int?{
+        return logeado
+    }
+    fun getUsers():MutableList<String>{
+        return listaUsers
     }
     fun AnyadirUsers(nuser:String){
         listaUsers.add(nuser)
