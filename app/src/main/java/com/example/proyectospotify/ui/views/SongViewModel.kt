@@ -40,7 +40,8 @@ open class SongViewModel:ViewModel() {
     private val _progreso = MutableStateFlow(0)
     val progreso = _progreso.asStateFlow()
 
-    private val _canciones: MutableList<Canciones> = mutableListOf()
+    private val _canciones= MutableStateFlow(mutableStateListOf<Canciones>())
+    val canciones = _canciones.asStateFlow()
     var _indice = 0
 
 
@@ -48,23 +49,23 @@ open class SongViewModel:ViewModel() {
     private val _actual = MutableStateFlow(0)
     val actual = _actual.asStateFlow()
     fun CargaCanciones(){
-        _canciones.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.hellfire,"4:31"))
-        _canciones.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.extras,"5:36"))
-        _canciones.add(Canciones("Like a Weed","ROCK",R.raw.likeaweed,R.drawable.likeaweed,"4:45"))
-        _canciones.add(Canciones("ALEMAN","TRAP",R.raw.aleman,R.drawable.aleman,"2:57"))
-        _canciones.add(Canciones("WANDA","REGGAETON",R.raw.wanda,R.drawable.quevedo,"3:00"))
-        _canciones.add(Canciones("QUEVEDOBZRP","REGGAETON",R.raw.quevedobzrp,R.drawable.bzrpportada,"3:24"))
-        _canciones.add(Canciones("MANDANGA","TROLL",R.raw.mandanga,R.drawable.mandanga,"2:50"))
-        _canciones.add(Canciones("LUCESAZULES","REGGAETON",R.raw.lucesazules,R.drawable.quevedo,"2:44"))
-        _canciones.add(Canciones("ELADIOCARRION","TRAP",R.raw.eladiocarrion,R.drawable.heladio,"2:52"))
-        _canciones.add(Canciones("DILLOM","TRAP",R.raw.dillom,R.drawable.dillom,"2:45"))
-        _canciones.add(Canciones("CABALLOHOMOSEXUAL","TROLL",R.raw.caballohomosexual,R.drawable.caballo,"0:46"))
-        _canciones.add(Canciones("CHAMBA","TROLL",R.raw.chamba,R.drawable.chambaportada,"2:45"))
+        _canciones.value.add(Canciones("Hellfire","ROCK", R.raw.hellfire,R.drawable.hellfire,"4:31"))
+        _canciones.value.add(Canciones("Extras","ROCK", R.raw.extras,R.drawable.extras,"5:36"))
+        _canciones.value.add(Canciones("Like a Weed","ROCK",R.raw.likeaweed,R.drawable.likeaweed,"4:45"))
+        _canciones.value.add(Canciones("ALEMAN","TRAP",R.raw.aleman,R.drawable.aleman,"2:57"))
+        _canciones.value.add(Canciones("WANDA","REGGAETON",R.raw.wanda,R.drawable.quevedo,"3:00"))
+        _canciones.value.add(Canciones("QUEVEDOBZRP","REGGAETON",R.raw.quevedobzrp,R.drawable.bzrpportada,"3:24"))
+        _canciones.value.add(Canciones("MANDANGA","TROLL",R.raw.mandanga,R.drawable.mandanga,"2:50"))
+        _canciones.value.add(Canciones("LUCESAZULES","REGGAETON",R.raw.lucesazules,R.drawable.quevedo,"2:44"))
+        _canciones.value.add(Canciones("ELADIOCARRION","TRAP",R.raw.eladiocarrion,R.drawable.heladio,"2:52"))
+        _canciones.value.add(Canciones("DILLOM","TRAP",R.raw.dillom,R.drawable.dillom,"2:45"))
+        _canciones.value.add(Canciones("CABALLOHOMOSEXUAL","TROLL",R.raw.caballohomosexual,R.drawable.caballo,"0:46"))
+        _canciones.value.add(Canciones("CHAMBA","TROLL",R.raw.chamba,R.drawable.chambaportada,"2:45"))
 
-        _actual.value=_canciones[_indice].Cancion
+        _actual.value=_canciones.value[_indice].Cancion
     }
     fun CancionCurso(): Canciones {
-        return _canciones[_indice]
+        return _canciones.value[_indice]
     }
     fun crearExo(context: Context){
         _songState.value = ExoPlayer.Builder(context).build()
@@ -133,11 +134,11 @@ open class SongViewModel:ViewModel() {
          *  5 - Preparar el reproductor y activar el playWhenReady
         */
         _indice++
-        if(_indice > _canciones.lastIndex){
+        if(_indice > _canciones.value.lastIndex){
             _indice=0
 
         }
-        _actual.value =_canciones[_indice].Cancion
+        _actual.value =_canciones.value[_indice].Cancion
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 
@@ -161,10 +162,10 @@ open class SongViewModel:ViewModel() {
         //Si el índice es menor que 0 (-1) pasa a la última cancion
         _indice--
         if(_indice  < 0){
-            _indice = _canciones.lastIndex
-            _actual.value =_canciones[_indice].Cancion
+            _indice = _canciones.value.lastIndex
+            _actual.value =_canciones.value[_indice].Cancion
         }else{
-            _actual.value =_canciones[_indice].Cancion
+            _actual.value =_canciones.value[_indice].Cancion
         }
 
         _songState.value!!.stop()
@@ -181,13 +182,16 @@ open class SongViewModel:ViewModel() {
 
         _songState.value!!.repeatMode=ExoPlayer.REPEAT_MODE_ONE
     }
+    fun noRepeat(){
+        _songState.value!!.repeatMode=ExoPlayer.REPEAT_MODE_OFF
+    }
     fun shuffle(context:Context){
-        var temporal=(Math.random()*_canciones.lastIndex).toInt()
+        var temporal=(Math.random()*_canciones.value.lastIndex).toInt()
         if(temporal>= _indice){
             temporal++
         }
         _indice=temporal
-        _actual.value =_canciones[_indice].Cancion
+        _actual.value =_canciones.value[_indice].Cancion
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 

@@ -51,9 +51,7 @@ class InicioViewModel: ViewModel() {
         _canciones.value.add(Canciones("CABALLOHOMOSEXUAL","TROLL",R.raw.caballohomosexual,R.drawable.caballo,"0:46"))
         _canciones.value.add(Canciones("CHAMBA","TROLL",R.raw.chamba,R.drawable.chambaportada,"2:45"))
     }
-    fun DescargaCanciones():ArrayList<Canciones>{
-        return canciones.value
-    }
+
     @Composable
     fun CancionesCard(Titulo:String, Imagen:Int){
         Card(colors = CardDefaults.cardColors(Color.Red)

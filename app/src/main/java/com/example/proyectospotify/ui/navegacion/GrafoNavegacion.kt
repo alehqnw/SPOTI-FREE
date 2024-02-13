@@ -20,7 +20,9 @@ import com.example.proyectospotify.ui.pantalla.BarraInferior
 import com.example.proyectospotify.ui.pantalla.BarraSuperior
 import com.example.proyectospotify.ui.pantalla.Buscador
 import com.example.proyectospotify.ui.pantalla.InicioView
+import com.example.proyectospotify.ui.pantalla.SongListView
 import com.example.proyectospotify.ui.pantalla.SongScreen
+import com.example.proyectospotify.ui.pantalla.sesionView
 import com.example.proyectospotify.ui.views.InicioViewModel
 import com.example.proyectospotify.ui.views.ScaffoldViewModel
 
@@ -28,35 +30,35 @@ import com.example.proyectospotify.ui.views.ScaffoldViewModel
 fun GrafoNavegacion() {
     val navController = rememberNavController()
     val entradaNavActual by navController.currentBackStackEntryAsState()
-    //val viewModelScaffold : ScaffoldViewModel = viewModel()
     val rutaActual = entradaNavActual?.destination?.route
     Scaffold(topBar = {if(rutaActual!=Rutas.Cancion.ruta){
-        BarraSuperior(titulo =
-        when(rutaActual){
-            Rutas.Pantallas.ruta ->{
-                "PANTALLA DE INICIO"
-            }
-            Rutas.Cancion.ruta->{
-                ""
-            }
-            Rutas.Buscador.ruta->{
-                "BUSCADOR"
-            }
-            else->{
-                "PANTALLA NO ESPERADA"
-            }
-        })
+        if(rutaActual==Rutas.Buscador.ruta || rutaActual==Rutas.Pantallas.ruta){
+            BarraSuperior(titulo =
+            when(rutaActual){
+                Rutas.Pantallas.ruta ->{
+                    "PANTALLA DE INICIO"
+                }
+                Rutas.Buscador.ruta->{
+                    "BUSCADOR"
+                }
+                else->{
+                    ""
+                }
+            })
+        }
+
     }
 
                       },
-        bottomBar = { if(rutaActual!=Rutas.Cancion.ruta){
+        bottomBar = { if(rutaActual==Rutas.Buscador.ruta || rutaActual==Rutas.Pantallas.ruta){
             BarraInferior(funcionNavegarPlayer = {
             // solo puedo ir pa atras si estoy en...
             navController.navigate(Rutas.Pantallas.ruta)
         }
             , funcionNavegarFoto = {
                 navController.navigate(Rutas.Buscador.ruta)
-            })}},
+            })}
+                    },
         content = {
             // paddingValues representa los dp que hay para evitar que el contenido se solape con las barras
                 paddingValues ->
@@ -67,17 +69,28 @@ fun GrafoNavegacion() {
                 color = MaterialTheme.colorScheme.background
             ) {
 
-                NavHost(navController = navController,startDestination = Rutas.Pantallas.ruta){
+                NavHost(navController = navController,startDestination = Rutas.InicioSesion.ruta){
+                    println(rutaActual)
+                    composable(Rutas.InicioSesion.ruta){
+                        sesionView(navController = navController)
+                    }
                     composable(Rutas.Pantallas.ruta){
                         InicioView(navController=navController)
                     }
                     composable(Rutas.Cancion.ruta+"/{IndiceRecibido}"){
                         val Indice = it.arguments?.getString("IndiceRecibido")?.toInt()
-                        SongScreen(Indice)
+                        SongScreen(navController,Indice)
                     }
                     composable(Rutas.Buscador.ruta){
                         Buscador(navController=navController)
                     }
+                    composable(Rutas.ListaCanciones.ruta+"/{IndiceRecibido}"){
+                        val indiceList = it.arguments?.getString("IndiceRecibido")?.toInt()
+                        if (indiceList != null) {
+                            SongListView(navController = navController,indice = indiceList)
+                        }
+                    }
+
                 }
 
             }

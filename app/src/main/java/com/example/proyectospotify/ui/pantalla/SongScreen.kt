@@ -2,9 +2,16 @@ package com.example.proyectospotify.ui.pantalla
 
 import android.annotation.SuppressLint
 import android.graphics.Paint
+import android.graphics.Paint.Align
+import android.os.Bundle
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,9 +19,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
@@ -44,9 +54,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.dataclass.Canciones
+import com.example.proyectospotify.ui.views.BBDD
 import com.example.proyectospotify.ui.views.InicioViewModel
 import com.example.proyectospotify.ui.views.SongViewModel
 import kotlinx.coroutines.delay
@@ -55,22 +67,27 @@ import kotlinx.coroutines.launch
 
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
-fun SongScreen(indice:Int?){
+fun SongScreen(navController: NavController,indice:Int?){
     val viewModel: SongViewModel = viewModel()
+    val basedatos by remember{ mutableStateOf(BBDD())}
     // Obtenemos el estado de la canción desde el ViewModel
     val contexto = LocalContext.current
     val songstate = viewModel.songState.collectAsState().value
     val corutinaScope = rememberCoroutineScope()
-
-
+    var playPause by remember{ mutableStateOf(false)}
+    var loopBool by remember{ mutableStateOf(false)}
+    var addBool by remember{ mutableStateOf(false)}
+    val bundle = null
     // Creamos una columna que ocupará todo el espacio disponible
     LaunchedEffect(key1 = Unit){
         if(indice!=null){
             viewModel._indice=indice
             println("SongScreen indice "+viewModel._indice)
         }
+
         viewModel.crearExo(contexto)
         viewModel.CargaCanciones()
         viewModel.play(contexto)
@@ -78,7 +95,6 @@ fun SongScreen(indice:Int?){
 
     if(songstate != null){
         var cancionEncurso by remember { mutableStateOf(viewModel.CancionCurso())}
-        println(viewModel._indice)
         corutinaScope.launch {
             cancionEncurso=viewModel.CancionCurso()
         }
@@ -90,12 +106,12 @@ fun SongScreen(indice:Int?){
             verticalArrangement = Arrangement.Center
         ) {
             // Mostramos la imagen de la canción
-
             Image(
                 painter = painterResource(cancionEncurso.Imagen),
                 contentDescription = null,
                 modifier = Modifier.size(325.dp)
             )
+
             // Mostramos el título de la canción
             Text(
                 text = cancionEncurso.Titulo,
@@ -142,7 +158,10 @@ fun SongScreen(indice:Int?){
                 }
 
                 // Botón para reproducir/pausar la canción
-                IconButton(onClick = { viewModel.PausarOSeguirMusica(contexto) }) {
+                IconButton(
+                    onClick = { viewModel.PausarOSeguirMusica(contexto); playPause = !playPause},
+                    modifier = Modifier.background(if (playPause) Color.Red else Color.Transparent)
+                    ) {
                     if(viewModel.progreso.collectAsState().value.toFloat() == viewModel.duracion.collectAsState().value.toFloat()){
                         cancionEncurso=viewModel.CancionCurso()
                     }
@@ -151,14 +170,14 @@ fun SongScreen(indice:Int?){
                         Icon(painterResource(id = R.drawable.ic_pause), contentDescription = null,
                             modifier = Modifier
                                 .size(100.dp)
-                                .background(Color.Red))
+                                )
                     } else {
                         Icon(
                             painterResource(id = R.drawable.playarrownegro)
                             , contentDescription = null,
                             Modifier
                                 .size(100.dp)
-                                .background(color = Color.Red))
+                                )
                     }
                 }
 
@@ -178,8 +197,31 @@ fun SongScreen(indice:Int?){
                 }
 
                 // Botón para activar/desactivar el repeat
-                IconButton(onClick = { viewModel.repeat() }) {
+                IconButton(onClick = { loopBool=!loopBool},
+                    modifier = Modifier.background(if (loopBool) Color.Red else Color.Transparent)
+                ) {
                     Icon(Icons.Filled.Refresh, contentDescription = null)
+                    LaunchedEffect(loopBool){
+                        if(loopBool){
+                            viewModel.repeat()
+                        }else{
+                            viewModel.noRepeat()
+                        }
+                    }
+                }
+                IconButton(onClick = {addBool!=addBool},
+                    modifier = Modifier.background(if (addBool) Color.Red else Color.Transparent)
+                ) {
+                    Icon(Icons.Filled.Create, contentDescription = null)
+                    LaunchedEffect(addBool){
+                        if(addBool){
+                            basedatos.addPersona(cancionEncurso)
+
+                        }else{
+                            basedatos.delPersona(cancionEncurso)
+                        }
+                    }
+
                 }
             }
     }
