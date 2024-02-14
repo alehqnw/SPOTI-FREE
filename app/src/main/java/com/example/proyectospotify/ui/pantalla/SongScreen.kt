@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
-fun SongScreen(navController: NavController,indice:Int?){
+fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
     val viewModel: SongViewModel = viewModel()
     // Obtenemos el estado de la canción desde el ViewModel
     val contexto = LocalContext.current
@@ -64,9 +64,9 @@ fun SongScreen(navController: NavController,indice:Int?){
             viewModel._indice=indice
             println("SongScreen indice "+viewModel._indice)
         }
-
+        println(esFavorito)
         viewModel.crearExo(contexto)
-        viewModel.CargaCanciones()
+        viewModel.CargaCanciones(esFavorito)
         viewModel.play(contexto)
     }
 
@@ -192,21 +192,25 @@ fun SongScreen(navController: NavController,indice:Int?){
                         }
                     }
                 }
-                IconButton(onClick = {addBool=!addBool},
-                    modifier = Modifier.background(if (addBool) Color.Red else Color.Transparent)
-                ) {
-                    Icon(Icons.Filled.Create, contentDescription = null)
-                    LaunchedEffect(addBool){
-                        if(addBool){
-                            BBDD.addPersona(cancionEncurso)
 
-                        }else{
-                            BBDD.delPersona(cancionEncurso)
+                if(!esFavorito){
+                    IconButton(onClick = {addBool=!addBool},
+                        modifier = Modifier.background(if (addBool) Color.Red else Color.Transparent)
+                    ) {
+                        Icon(Icons.Filled.Create, contentDescription = null)
+                        LaunchedEffect(addBool){
+                            if(addBool){
+                                BBDD.addPersona(cancionEncurso)
+
+                            }else{
+                                BBDD.delPersona(cancionEncurso)
+                            }
+                            println(BBDD.getPersona())
                         }
-                        println(BBDD.getPersona())
-                    }
 
+                    }
                 }
+
             }
     }
 

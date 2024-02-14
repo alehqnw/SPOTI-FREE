@@ -7,6 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,25 +26,27 @@ fun SongListView(navController:NavController, indice:Int) {
     var Canciones : MutableList<Canciones> = arrayListOf()
     val SongListViewModel:SongListViewModel = viewModel()
     var ListaAlbum : MutableList<Canciones> = mutableListOf()
-
+    var esFavorito by remember{ mutableStateOf(false)}
 
     if(indice==0){
         Canciones=BBDD._canciones
+        esFavorito=false
     }else{
         Canciones=BBDD.cancionesPersona
+        esFavorito=true
     }
-
+    ListaAlbum=Canciones
     println("Ultimo índice " +ListaAlbum.lastIndex+Canciones.lastIndex)
+
     Column(
         Modifier
             .fillMaxSize()
             .background(Color.Black)) {
         LazyColumn(){
             item{
-                Canciones.forEachIndexed { indicador, cancion ->
-                    println(cancion)
+                ListaAlbum.forEachIndexed { indicador, cancion ->
                     DropdownMenuItem(
-                        onClick = { indice(indicador,navController)},
+                        onClick = { indice(indicador,navController, esFavorito)},
                         text = { SongListViewModel.CancionesCard(Titulo = cancion.Titulo, Imagen =cancion.Imagen) }
                     )
                 }

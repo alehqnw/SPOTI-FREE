@@ -58,7 +58,7 @@ fun Buscador(navController: NavController) {
                         if (cancion.Titulo.startsWith(searchText, ignoreCase = true)) {
 
                             DropdownMenuItem(
-                                onClick = { indice(indicador,navController)},
+                                onClick = { indice(indicador,navController,false)},
                                 text = { ListCard(Titulo = cancion.Titulo, Imagen =cancion.Imagen) }
                             )
 
@@ -70,9 +70,9 @@ fun Buscador(navController: NavController) {
         }
     }
 }
-fun indice (Indice:Int,navController: NavController){
+fun indice (Indice:Int,navController: NavController,esFavorito:Boolean){
     println("INDICE INDICADOR "+Indice)
-    navController.navigate(Rutas.Cancion.ruta+"/${Indice}")
+    navController.navigate(Rutas.Cancion.ruta+"/${Indice}/${esFavorito}")
 
 }
 @Composable
