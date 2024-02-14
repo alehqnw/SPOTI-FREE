@@ -14,9 +14,11 @@ object BBDD {
         listaUsers.add("Alejandro")
         listaUsers.add("Alverto")
         listaUsers.add("Juan")
+        listaUsers.add("admin")
         listaPassowrd.add("1234")//Contraseña de Alejandro y las demás con tal
         listaPassowrd.add("12345")
         listaPassowrd.add("123456")
+        listaPassowrd.add("admin")
     }
     fun getPersona():MutableList<Canciones>{
         return cancionesPersona
