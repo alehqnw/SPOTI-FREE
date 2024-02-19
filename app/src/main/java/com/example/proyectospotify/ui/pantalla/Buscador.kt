@@ -15,6 +15,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +25,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.proyectospotify.R
+import com.example.proyectospotify.database.database
 import com.example.proyectospotify.ui.modelo.Rutas
 import com.example.proyectospotify.ui.views.BBDD
 import com.example.proyectospotify.ui.views.InicioViewModel
@@ -37,7 +40,7 @@ fun Buscador(navController: NavController) {
     val ViewModel:InicioViewModel = viewModel()
 
 
-    val ListaCanciones = BBDD._canciones
+    val ListaCanciones = database.listaCanciones.collectAsState().value
     Column (modifier = Modifier
         .fillMaxWidth()){
         SearchBar(
@@ -59,7 +62,7 @@ fun Buscador(navController: NavController) {
 
                             DropdownMenuItem(
                                 onClick = { indice(indicador,navController,false)},
-                                text = { ListCard(Titulo = cancion.Titulo, Imagen =cancion.Imagen) }
+                                text = { ListCard(Titulo = cancion.Titulo) }
                             )
 
                         }
@@ -76,10 +79,14 @@ fun indice (Indice:Int,navController: NavController,esFavorito:Boolean){
 
 }
 @Composable
-fun ListCard(Titulo:String,Imagen:Int){
+fun ListCard(Titulo:String){
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(10.dp)) {
+        var Imagen:Int = 0
+        if(Titulo=="Extras"){
+            Imagen= R.drawable.extras
+        }
         Row {
             Image(
                 painter= painterResource(id = Imagen),

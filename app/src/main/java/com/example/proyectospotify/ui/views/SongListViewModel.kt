@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.modelo.Rutas
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,13 +35,17 @@ class SongListViewModel: ViewModel() {
 
     }
     @Composable
-    fun CancionesCard(Titulo:String, Imagen:Int){
+    fun CancionesCard(Titulo:String){
         Card(modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)) {
+            var Imagen:Int =0
+            if(Titulo=="Extras"){
+                R.drawable.extras
+            }
             Row {
                 Image(
-                    painter= painterResource(id = Imagen),
+                    painter= painterResource(id = R.drawable.extras),
                     contentDescription = null,
                     modifier = Modifier.size(80.dp)
                 )

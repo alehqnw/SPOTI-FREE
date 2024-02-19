@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "375781269929",
+    "project_id": "proyectospotifybien",
+    "storage_bucket": "proyectospotifybien.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375781269929:android:004fca9073d937abad24b8",
+        "android_client_info": {
+          "package_name": "com.example.proyectospotify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaQRJuGN8MjEVvGl0xNIOa3sjffDUZB4Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

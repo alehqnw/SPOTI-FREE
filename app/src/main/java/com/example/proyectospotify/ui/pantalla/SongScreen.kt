@@ -1,5 +1,6 @@
 package com.example.proyectospotify.ui.pantalla
 
+import SongViewModel
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -41,8 +42,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectospotify.R
+import com.example.proyectospotify.database.database
+import com.example.proyectospotify.database.storage
 import com.example.proyectospotify.ui.views.BBDD
-import com.example.proyectospotify.ui.views.SongViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import io.grpc.Context.Storage
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.launch
 
 
@@ -58,18 +65,43 @@ fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
     var playPause by remember{ mutableStateOf(false)}
     var loopBool by remember{ mutableStateOf(false)}
     var addBool by remember{ mutableStateOf(false)}
+    var storage = FirebaseStorage.getInstance()
+    var songRef:StorageReference
+    var downloadurl:String? = ""
+    var bd = database.listaCanciones.collectAsState().value
     // Creamos una columna que ocupará todo el espacio disponible
     LaunchedEffect(key1 = Unit){
         if(indice!=null){
+//            songRef= storage
+//                .getReferenceFromUrl("gs://proyectospotifybien.appspot.com/raw/extras.mp3")
+//              .child("extras.mp3")
+//            songRef.downloadUrl.addOnSuccessListener {
+//                downloadurl=it.toString()
+//
+//            }
+            bd.forEach{
+///               var titulo = R.raw.extras.toString()
+                println("musica "+downloadurl)
+                println(it.Cancion)//AÑADIR A LA BD EL INT DE LA MUSICA
+            }
+            songRef.downloadUrl.addOnFailureListener{
+                println(it.message)
+            }
             viewModel._indice=indice
-            println("SongScreen indice "+viewModel._indice)
+            //println("SongScreen indice "+viewModel._indice)
         }
-        println(esFavorito)
+
+//        if(downloadurl!=null){
+//            bd.forEach {
+//                it.Cancion= downloadurl as String
+//                println(it.Titulo + " cancion url "+it.Cancion)
+//            }
+
+
         viewModel.crearExo(contexto)
         viewModel.CargaCanciones(esFavorito)
         viewModel.play(contexto)
     }
-
 
     if(songstate != null){
         var cancionEncurso by remember { mutableStateOf(viewModel.CancionCurso())}
@@ -88,7 +120,7 @@ fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
         ) {
             // Mostramos la imagen de la canción
             Image(
-                painter = painterResource(cancionEncurso.Imagen),
+                painter = painterResource(R.drawable.extras),
                 contentDescription = null,
                 modifier = Modifier.size(325.dp)
             )
@@ -200,12 +232,12 @@ fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
                         Icon(Icons.Filled.Create, contentDescription = null)
                         LaunchedEffect(addBool){
                             if(addBool){
-                                BBDD.addPersona(cancionEncurso)
+                                //BBDD.addPersona(cancionEncurso)
 
                             }else{
-                                BBDD.delPersona(cancionEncurso)
+                                //BBDD.delPersona(cancionEncurso)
                             }
-                            println(BBDD.getPersona())
+                            //println(BBDD.getPersona())
                         }
 
                     }

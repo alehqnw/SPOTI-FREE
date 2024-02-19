@@ -34,21 +34,27 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectospotify.R
+import com.example.proyectospotify.database.database
 import com.example.proyectospotify.ui.dataclass.Dialogo
 import com.example.proyectospotify.ui.views.BBDD
 import com.example.proyectospotify.ui.views.sesionViewModel
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.forEach
 
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
+
 @Composable
 fun sesionView(navController: NavController) {
+    lateinit var auth: FirebaseAuth
     var usuario by remember{ mutableStateOf("")}
     var password by remember{ mutableStateOf("")}
+    auth = FirebaseAuth.getInstance()
+
     val corutinaScope = rememberCoroutineScope()
     var abrirDialogo by remember{ mutableStateOf(false)}
     var sesionviewModel:sesionViewModel = viewModel()
     LaunchedEffect(key1 = Unit){
         sesionviewModel.cargarBD()
-        BBDD.CargaCanciones()
     }
     Column(modifier = Modifier
         .fillMaxSize()
@@ -82,7 +88,7 @@ fun sesionView(navController: NavController) {
                 OutlinedTextField(
                     value = usuario,
                     onValueChange = { usuario = it;sesionviewModel.actualizaUsuario(usuario)  },
-                    label= { Text(text = "Usuario") },
+                    label= { Text(text = "Email") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 25.dp),
@@ -110,25 +116,39 @@ fun sesionView(navController: NavController) {
                     Button(
                         onClick = {abrirDialogo=true},
                         colors = ButtonDefaults.buttonColors(Color.White)) {
-                        Text(text = "Crear usuario",color=Color.Black)
+                        Text(text = "Crear usuario",color=Color.Gray)
                             if(abrirDialogo){
                                 Dialogo(
                                     openDialog = {abrirDialogo=it},
-                                    userConfirm ={usuario=it},
-                                    passwordConfirm = {password=it})
-                                if(!usuario.isEmpty() && !password.isEmpty()){
-                                    sesionviewModel.actualizaUsuario(usuario)
-                                    sesionviewModel.actualizaPassword(password)
-                                    sesionviewModel.AnyadirCreeden(usuario,password)
-                                }
-                            }
+                                    userConfirm ={usuario=it;sesionviewModel.actualizaUsuario(usuario)},
+                                    passwordConfirm = {password=it;sesionviewModel.actualizaPassword(password)})
 
+
+                            }
+                            LaunchedEffect(key1 = abrirDialogo){
+                                if(!usuario.isEmpty() && !password.isEmpty()){
+//                                   sesionviewModel.AnyadirCreeden(usuario,password)
+
+                                    auth.createUserWithEmailAndPassword(usuario,password).addOnCompleteListener{
+                                        task->
+                                        if(task.isSuccessful){
+                                            val user = auth.currentUser
+                                            println("Usuario añadido con exito: $user")
+                                        }else{
+                                            println(usuario + " password "+password)
+                                            println("No se ha podido añadir el usuario")
+                                        }
+                                    }
+                                }
+                        }
 
                     }
-
                     Button(
-                        onClick = { sesionviewModel.compruebaCreeden(navController) },
-                        colors = ButtonDefaults.buttonColors(Color.White)) {
+                        onClick = { if(usuario.isNotEmpty()&&password.isNotEmpty())sesionviewModel.compruebaCreeden(navController,auth) },
+                        colors = ButtonDefaults.buttonColors(Color.Gray),
+                        modifier= Modifier
+                            .fillMaxWidth()
+                            .size(100.dp)) {
                         Text(text = "Iniciar sesión",color=Color.Black)
                     }
                 }

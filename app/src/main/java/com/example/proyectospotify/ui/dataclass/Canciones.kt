@@ -1,11 +1,11 @@
 package com.example.proyectospotify.ui.dataclass
 
-class Canciones(
-    val Titulo:String,
+data class Canciones(
+    var Titulo:String,
     val Genero:String,
     val Cancion:Int,
     val Imagen:Int,
     val duracion:String
 ) {
-
+    var idCanciones=""
 }

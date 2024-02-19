@@ -1,4 +1,4 @@
-package com.example.proyectospotify.ui.views
+
 
 import android.content.ContentResolver
 import android.content.Context
@@ -19,7 +19,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.room.util.copy
 import com.example.proyectospotify.R
+import com.example.proyectospotify.database.database
 import com.example.proyectospotify.ui.dataclass.Canciones
+import com.example.proyectospotify.ui.dataclass.CancionesDB
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-open class SongViewModel:ViewModel() {
+class SongViewModel:ViewModel() {
 
     private val _songState: MutableStateFlow<ExoPlayer?> = MutableStateFlow(null)
     val songState = _songState.asStateFlow()
@@ -41,9 +43,8 @@ open class SongViewModel:ViewModel() {
     private val _progreso = MutableStateFlow(0)
     val progreso = _progreso.asStateFlow()
 
-    private var _canciones : MutableList<Canciones> = mutableListOf()
+    private var _canciones : SnapshotStateList<CancionesDB> = SnapshotStateList()
     var _indice = 0
-
 
     //Cancion actual
     private val _actual = MutableStateFlow(0)
@@ -51,14 +52,14 @@ open class SongViewModel:ViewModel() {
     fun CargaCanciones(esFavorito:Boolean){
         println(esFavorito)
         if(!esFavorito){
-            _canciones= BBDD._canciones
+            _canciones= database.listaCanciones.value
         }else{
-            _canciones=BBDD.cancionesPersona
+            //_canciones=BBDD.cancionesPersona
         }
 
-        _actual.value=_canciones[_indice].Cancion
+        _actual.value=_canciones[_indice].Cancion.toInt()
     }
-    fun CancionCurso(): Canciones {
+    fun CancionCurso(): CancionesDB {
         return _canciones[_indice]
     }
     fun crearExo(context: Context){
@@ -132,7 +133,7 @@ open class SongViewModel:ViewModel() {
             _indice=0
 
         }
-        _actual.value =_canciones[_indice].Cancion
+        _actual.value =_canciones[_indice].Cancion.toInt()
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 
@@ -157,9 +158,9 @@ open class SongViewModel:ViewModel() {
         _indice--
         if(_indice  < 0){
             _indice = _canciones.lastIndex
-            _actual.value =_canciones[_indice].Cancion
+            _actual.value =_canciones[_indice].Cancion.toInt()
         }else{
-            _actual.value =_canciones[_indice].Cancion
+            _actual.value =_canciones[_indice].Cancion.toInt()
         }
 
         _songState.value!!.stop()
@@ -185,7 +186,7 @@ open class SongViewModel:ViewModel() {
             temporal++
         }
         _indice=temporal
-        _actual.value =_canciones[_indice].Cancion
+        _actual.value =_canciones[_indice].Cancion.toInt()
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 

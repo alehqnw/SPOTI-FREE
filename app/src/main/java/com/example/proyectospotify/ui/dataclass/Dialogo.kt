@@ -99,7 +99,7 @@ fun Dialogo(
                     isError = (usuarioError == user.isEmpty()),
                     supportingText = {
                         if (passwordError){
-                            Text(text = "Error no lo puedes dejar en blanco",
+                            Text(text = "Error debes ingresar el correo",
                                 modifier = Modifier.fillMaxWidth(),
                                 color=MaterialTheme.colorScheme.error)
                         }
