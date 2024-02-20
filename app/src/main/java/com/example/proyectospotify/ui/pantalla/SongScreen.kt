@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.proyectospotify.R
 import com.example.proyectospotify.database.database
 import com.example.proyectospotify.database.storage
@@ -65,39 +66,18 @@ fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
     var playPause by remember{ mutableStateOf(false)}
     var loopBool by remember{ mutableStateOf(false)}
     var addBool by remember{ mutableStateOf(false)}
-    var storage = FirebaseStorage.getInstance()
-    var songRef:StorageReference
-    var downloadurl:String? = ""
     var bd = database.listaCanciones.collectAsState().value
     // Creamos una columna que ocupará todo el espacio disponible
     LaunchedEffect(key1 = Unit){
         if(indice!=null){
-//            songRef= storage
-//                .getReferenceFromUrl("gs://proyectospotifybien.appspot.com/raw/extras.mp3")
-//              .child("extras.mp3")
-//            songRef.downloadUrl.addOnSuccessListener {
-//                downloadurl=it.toString()
-//
-//            }
             bd.forEach{
 ///               var titulo = R.raw.extras.toString()
-                println("musica "+downloadurl)
                 println(it.Cancion)//AÑADIR A LA BD EL INT DE LA MUSICA
-            }
-            songRef.downloadUrl.addOnFailureListener{
-                println(it.message)
+
             }
             viewModel._indice=indice
             //println("SongScreen indice "+viewModel._indice)
         }
-
-//        if(downloadurl!=null){
-//            bd.forEach {
-//                it.Cancion= downloadurl as String
-//                println(it.Titulo + " cancion url "+it.Cancion)
-//            }
-
-
         viewModel.crearExo(contexto)
         viewModel.CargaCanciones(esFavorito)
         viewModel.play(contexto)
@@ -119,8 +99,9 @@ fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
             verticalArrangement = Arrangement.Center
         ) {
             // Mostramos la imagen de la canción
+            val painter = rememberImagePainter(data = cancionEncurso.Imagen)
             Image(
-                painter = painterResource(R.drawable.extras),
+                painter = painter,
                 contentDescription = null,
                 modifier = Modifier.size(325.dp)
             )
@@ -233,9 +214,10 @@ fun SongScreen(navController: NavController,indice:Int?,esFavorito:Boolean){
                         LaunchedEffect(addBool){
                             if(addBool){
                                 //BBDD.addPersona(cancionEncurso)
-
+                                database.addSong(cancionEncurso.Titulo)
                             }else{
                                 //BBDD.delPersona(cancionEncurso)
+                                database.removeSong(cancionEncurso.Titulo)
                             }
                             //println(BBDD.getPersona())
                         }

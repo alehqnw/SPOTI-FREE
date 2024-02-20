@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.proyectospotify.R
 import com.example.proyectospotify.database.database
 import com.example.proyectospotify.ui.modelo.Rutas
@@ -62,7 +63,7 @@ fun Buscador(navController: NavController) {
 
                             DropdownMenuItem(
                                 onClick = { indice(indicador,navController,false)},
-                                text = { ListCard(Titulo = cancion.Titulo) }
+                                text = { ListCard(Imagen = cancion.Imagen,Titulo = cancion.Titulo) }
                             )
 
                         }
@@ -79,17 +80,14 @@ fun indice (Indice:Int,navController: NavController,esFavorito:Boolean){
 
 }
 @Composable
-fun ListCard(Titulo:String){
+fun ListCard(Imagen:String,Titulo:String){
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(10.dp)) {
-        var Imagen:Int = 0
-        if(Titulo=="Extras"){
-            Imagen= R.drawable.extras
-        }
         Row {
+            val painter = rememberImagePainter(data = Imagen)
             Image(
-                painter= painterResource(id = Imagen),
+                painter= painter,
                 contentDescription = null,
                 modifier = Modifier.size(80.dp)
             )

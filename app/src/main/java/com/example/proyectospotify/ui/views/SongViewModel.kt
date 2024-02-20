@@ -3,32 +3,22 @@
 import android.content.ContentResolver
 import android.content.Context
 import android.content.res.Resources
-import android.media.browse.MediaBrowser
 import android.net.Uri
 import androidx.annotation.AnyRes
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.SimpleExoPlayer
-import androidx.room.util.copy
-import com.example.proyectospotify.R
 import com.example.proyectospotify.database.database
-import com.example.proyectospotify.ui.dataclass.Canciones
 import com.example.proyectospotify.ui.dataclass.CancionesDB
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class SongViewModel:ViewModel() {
 
@@ -47,17 +37,26 @@ class SongViewModel:ViewModel() {
     var _indice = 0
 
     //Cancion actual
-    private val _actual = MutableStateFlow(0)
+    private val _actual = MutableStateFlow("")
     val actual = _actual.asStateFlow()
     fun CargaCanciones(esFavorito:Boolean){
         println(esFavorito)
         if(!esFavorito){
             _canciones= database.listaCanciones.value
         }else{
-            //_canciones=BBDD.cancionesPersona
+            _canciones.clear()
+            database.listaCanciones.value.forEach{cancion->
+                database.listaUsers.value.forEach { usuario ->
+                    if (usuario.usuario == database.currentUsuario) {
+                        if (usuario.canciones.contains(cancion.Titulo)) {
+                            _canciones.add(cancion)
+                        }
+                    }
+                }
+            }
         }
 
-        _actual.value=_canciones[_indice].Cancion.toInt()
+        _actual.value=_canciones[_indice].Cancion
     }
     fun CancionCurso(): CancionesDB {
         return _canciones[_indice]
@@ -68,7 +67,7 @@ class SongViewModel:ViewModel() {
         _songState.value!!.playWhenReady
     }
     fun play(context:Context){
-        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value))
+        val mediaItem = MediaItem.fromUri(_actual.value.toUri())
         _songState.value!!.setMediaItem(mediaItem)
         _songState.value!!.prepare()
         _songState.value!!.playWhenReady = true
@@ -133,11 +132,11 @@ class SongViewModel:ViewModel() {
             _indice=0
 
         }
-        _actual.value =_canciones[_indice].Cancion.toInt()
+        _actual.value =_canciones[_indice].Cancion
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 
-        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value ))
+        val mediaItem = MediaItem.fromUri(_actual.value.toUri())
         _songState.value!!.setMediaItem(mediaItem)
         _songState.value!!.prepare()
         _songState.value!!.playWhenReady = true
@@ -158,15 +157,15 @@ class SongViewModel:ViewModel() {
         _indice--
         if(_indice  < 0){
             _indice = _canciones.lastIndex
-            _actual.value =_canciones[_indice].Cancion.toInt()
+            _actual.value =_canciones[_indice].Cancion
         }else{
-            _actual.value =_canciones[_indice].Cancion.toInt()
+            _actual.value =_canciones[_indice].Cancion
         }
 
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 
-        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value ))
+        val mediaItem = MediaItem.fromUri(_actual.value.toUri())
         _songState.value!!.setMediaItem(mediaItem)
 
         _songState.value!!.prepare()
@@ -186,11 +185,11 @@ class SongViewModel:ViewModel() {
             temporal++
         }
         _indice=temporal
-        _actual.value =_canciones[_indice].Cancion.toInt()
+        _actual.value =_canciones[_indice].Cancion
         _songState.value!!.stop()
         _songState.value!!.clearMediaItems()
 
-        val mediaItem = MediaItem.fromUri(obtenerRuta(context,_actual.value ))
+        val mediaItem = MediaItem.fromUri(_actual.value.toUri())
         _songState.value!!.setMediaItem(mediaItem)
 
         _songState.value!!.prepare()

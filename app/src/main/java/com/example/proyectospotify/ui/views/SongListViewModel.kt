@@ -12,10 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.proyectospotify.R
 import com.example.proyectospotify.ui.modelo.Rutas
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,17 +38,15 @@ class SongListViewModel: ViewModel() {
 
     }
     @Composable
-    fun CancionesCard(Titulo:String){
+    fun CancionesCard(Imagen:String,Titulo:String){
         Card(modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)) {
-            var Imagen:Int =0
-            if(Titulo=="Extras"){
-                R.drawable.extras
-            }
+
             Row {
+                val painter = rememberImagePainter(data = Imagen)
                 Image(
-                    painter= painterResource(id = R.drawable.extras),
+                    painter= painter,
                     contentDescription = null,
                     modifier = Modifier.size(80.dp)
                 )

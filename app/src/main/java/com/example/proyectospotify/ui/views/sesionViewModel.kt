@@ -35,39 +35,13 @@ class sesionViewModel: ViewModel() {
     fun actualizaPassword(Npassword: String){
         _password.value=Npassword
     }
-    fun AnyadirCreeden(Nusuario:String,Npassword:String){
-        bd.anyadirUser(Nusuario,Npassword)
-
-    }
     fun compruebaCreeden(navController: NavController, auth: FirebaseAuth){
-//        for (i in 0 until bd.listaUsers.value.size){
-//            if((bd.listaUsers.value[i].usuario.equals(_usuario.value)) && (bd.listaUsers.value[i].password.equals(_password.value))){
-//                navController.navigate(Rutas.Pantallas.ruta)
-//                break
-//            }else{
-//                falsoEstrue.value=true
-//
-//            }
-//
-//        }
-//        auth.signInWithCustomToken("539B8F6A-39CE-42A1-BEEC-CCBA687F4C4C").addOnCompleteListener{
-//            task ->
-//            if (task.isSuccessful) {
-//                // Inicio de sesión exitoso, actualiza la interfaz de usuario con la información del usuario
-//                val user = auth.currentUser
-//                // ...
-//            } else {
-//                // Si el inicio de sesión falla, muestra un mensaje al usuario.
-//                println("No se ha iniciado sesion correctamente")
-//                // ...
-//            }
-//        }
-
         auth.signInWithEmailAndPassword(usuario.value,password.value).addOnCompleteListener{
                 task ->
             if (task.isSuccessful) {
                 // Inicio de sesión exitoso, actualiza la interfaz de usuario con la información del usuario
-                val user = auth.currentUser
+                val user = auth.currentUser.toString()
+                database.currentUsuario=usuario.value
                 navController.navigate(Rutas.Pantallas.ruta)
                 // ...
             } else {

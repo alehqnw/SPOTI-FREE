@@ -92,7 +92,6 @@ fun sesionView(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 25.dp),
-                    colors = TextFieldDefaults.colors(Color.DarkGray),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     singleLine = true)
 
@@ -103,7 +102,6 @@ fun sesionView(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 25.dp),
-                    colors = TextFieldDefaults.colors(Color.DarkGray),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done),
@@ -132,8 +130,9 @@ fun sesionView(navController: NavController) {
                                     auth.createUserWithEmailAndPassword(usuario,password).addOnCompleteListener{
                                         task->
                                         if(task.isSuccessful){
-                                            val user = auth.currentUser
-                                            println("Usuario añadido con exito: $user")
+                                            val user:String = auth.currentUser.toString()
+                                            database.anyadirUser(usuario)
+                                            println("Usuario añadido con exito:$usuario")
                                         }else{
                                             println(usuario + " password "+password)
                                             println("No se ha podido añadir el usuario")
@@ -145,11 +144,8 @@ fun sesionView(navController: NavController) {
                     }
                     Button(
                         onClick = { if(usuario.isNotEmpty()&&password.isNotEmpty())sesionviewModel.compruebaCreeden(navController,auth) },
-                        colors = ButtonDefaults.buttonColors(Color.Gray),
-                        modifier= Modifier
-                            .fillMaxWidth()
-                            .size(100.dp)) {
-                        Text(text = "Iniciar sesión",color=Color.Black)
+                        colors = ButtonDefaults.buttonColors(Color.White)) {
+                        Text(text = "Iniciar sesión",color=Color.Gray)
                     }
                 }
             }
